@@ -1,0 +1,87 @@
+{
+  "true_value_\u03b5=0.0": {
+    "value": 0.8641306958139799,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.182478"
+  },
+  "true_value_\u03b5=0.1": {
+    "value": 0.8498040562909428,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.225100"
+  },
+  "true_value_\u03b5=0.3": {
+    "value": 0.8055782142522128,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.280143"
+  },
+  "true_value_\u03b5=0.5": {
+    "value": 0.7324143686069333,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.356170"
+  },
+  "true_value_\u03b5=0.8": {
+    "value": 0.38194661962864995,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.507228"
+  },
+  "ope_good_\u03b5=0.0": {
+    "value": 0.8641306958139797,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:06.896454"
+  },
+  "ope_good_\u03b5=0.1": {
+    "value": 0.8533919873203689,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:07.289887"
+  },
+  "ope_good_\u03b5=0.3": {
+    "value": 0.8047026893453424,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:07.678324"
+  },
+  "ope_good_\u03b5=0.5": {
+    "value": 0.600914746848477,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:08.067533"
+  },
+  "ope_good_\u03b5=0.8": {
+    "value": 0.4831737527394365,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:08.461970"
+  },
+  "ope_bad_\u03b5=0.0": {
+    "value": 0.0,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:09.858151"
+  },
+  "ope_bad_\u03b5=0.1": {
+    "value": 0.8279959859288376,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:11.235932"
+  },
+  "ope_bad_\u03b5=0.3": {
+    "value": 0.8185501224715316,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:12.607897"
+  },
+  "ope_bad_\u03b5=0.5": {
+    "value": 0.8491672143040853,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:13.992494"
+  },
+  "ope_bad_\u03b5=0.8": {
+    "value": 0.7988275419827404,
+    "description": "",
+    "timestamp": "2026-03-05T01:12:15.375823"
+  },
+  "ranking_consistent": {
+    "value": 0.0,
+    "description": "selection consistency (1=same policy selected)",
+    "timestamp": "2026-03-05T01:12:15.375867"
+  },
+  "n_dominant_policies": {
+    "value": 1.0,
+    "description": "number of robust policies selected",
+    "timestamp": "2026-03-05T01:12:15.375997"
+  }
+}

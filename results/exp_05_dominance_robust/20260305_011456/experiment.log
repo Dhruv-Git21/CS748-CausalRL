@@ -1,0 +1,83 @@
+======================================================================
+Experiment: exp_05_dominance_robust
+Started: 2026-03-05T01:14:56.518413
+Output Directory: results/exp_05_dominance_robust/20260305_011456
+======================================================================
+
+
+──────────────────────────────────────────────────────────────────────
+  Setup & Configuration
+──────────────────────────────────────────────────────────────────────
+
+[ENV] Gridworld 5x5
+[POLICIES] Created 5 policies: ['ε=0.0', 'ε=0.1', 'ε=0.3', 'ε=0.5', 'ε=0.8']
+
+──────────────────────────────────────────────────────────────────────
+  Two Evaluation Scenarios
+──────────────────────────────────────────────────────────────────────
+
+[SCENARIO] Scenario 1: GOOD behavior policy (ε=0.3)
+[SCENARIO] Scenario 2: BAD behavior policy (ε=0.9, avoids goal)
+
+──────────────────────────────────────────────────────────────────────
+  Ground Truth Evaluation
+──────────────────────────────────────────────────────────────────────
+
+  → true_value_ε=0.0: 0.864131
+  → true_value_ε=0.1: 0.849804
+  → true_value_ε=0.3: 0.805578
+  → true_value_ε=0.5: 0.732414
+  → true_value_ε=0.8: 0.381947
+[GROUND_TRUTH] Ranking: ['ε=0.0', 'ε=0.1', 'ε=0.3', 'ε=0.5', 'ε=0.8']
+
+──────────────────────────────────────────────────────────────────────
+  OPE Evaluation (Scenario 1: Good behavior)
+──────────────────────────────────────────────────────────────────────
+
+  → ope_good_ε=0.0: 0.864131
+  → ope_good_ε=0.1: 0.853392
+  → ope_good_ε=0.3: 0.804703
+  → ope_good_ε=0.5: 0.600915
+  → ope_good_ε=0.8: 0.483174
+[RANKING_GOOD] OPE ranking: ['ε=0.0', 'ε=0.1', 'ε=0.3', 'ε=0.5', 'ε=0.8']
+
+──────────────────────────────────────────────────────────────────────
+  OPE Evaluation (Scenario 2: Bad behavior)
+──────────────────────────────────────────────────────────────────────
+
+  → ope_bad_ε=0.0: 0.000000
+  → ope_bad_ε=0.1: 0.827996
+  → ope_bad_ε=0.3: 0.818550
+  → ope_bad_ε=0.5: 0.849167
+  → ope_bad_ε=0.8: 0.798828
+[RANKING_BAD] OPE ranking: ['ε=0.5', 'ε=0.1', 'ε=0.3', 'ε=0.8', 'ε=0.0']
+
+──────────────────────────────────────────────────────────────────────
+  Policy Selection Comparison
+──────────────────────────────────────────────────────────────────────
+
+[RANKING_SELECT] Scenario 1 best: ε=0.0
+[RANKING_SELECT] Scenario 2 best: ε=0.5
+  → ranking_consistent: 0.000000 (selection consistency (1=same policy selected))
+[DOMINANCE_SELECT] Robust policies (worst-case ≥ median): ['ε=0.1', 'ε=0.3', 'ε=0.5']
+  → n_dominant_policies: 3.000000 (number of robust policies selected)
+
+──────────────────────────────────────────────────────────────────────
+  Visualization
+──────────────────────────────────────────────────────────────────────
+
+[VIZ] Saved: robustness_comparison.png
+
+──────────────────────────────────────────────────────────────────────
+  Experiment Summary
+──────────────────────────────────────────────────────────────────────
+
+✅ Dominance analysis complete
+[KEY_FINDING] Ranking-based selection is unstable
+[KEY_FINDING]   Scenario 1 chooses: ε=0.0
+[KEY_FINDING]   Scenario 2 chooses: ε=0.5
+[KEY_FINDING]   → DIFFERENT policies selected!
+[KEY_FINDING] Dominance-based selection is more robust
+[KEY_FINDING]   Robust policies: ['ε=0.1', 'ε=0.3', 'ε=0.5']
+[KEY_FINDING]   These 3 policies work well in worst-case
+  → experiment_results recorded (Robustness analysis)

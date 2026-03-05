@@ -1,0 +1,75 @@
+======================================================================
+Experiment: exp_04_nontransitivity
+Started: 2026-03-05T01:11:35.002160
+Output Directory: results/exp_04_nontransitivity/20260305_011135
+======================================================================
+
+
+──────────────────────────────────────────────────────────────────────
+  Setup & Configuration
+──────────────────────────────────────────────────────────────────────
+
+[GAME] Rock-Paper-Scissors, zero-sum game
+
+──────────────────────────────────────────────────────────────────────
+  Policy Creation (Biased Mixed Strategies)
+──────────────────────────────────────────────────────────────────────
+
+[POLICIES] Created 3 biased policies: ['BiasRock', 'BiasPaper', 'BiasScissors']
+[POLICIES]   BiasRock: 55% Rock, 25% Paper, 20% Scissors
+[POLICIES]   BiasPaper: 20% Rock, 55% Paper, 25% Scissors
+[POLICIES]   BiasScissors: 25% Rock, 20% Paper, 55% Scissors
+
+──────────────────────────────────────────────────────────────────────
+  Round-Robin Tournament
+──────────────────────────────────────────────────────────────────────
+
+[TOURNAMENT] Each pair plays 1000 matches
+  → winrate_BiasRock_vs_BiasRock: 0.500000 (head-to-head win rate)
+[TOURNAMENT]   BiasRock vs BiasRock: 50.0%
+  → winrate_BiasRock_vs_BiasPaper: 0.292000 (head-to-head win rate)
+[TOURNAMENT]   BiasRock vs BiasPaper: 29.2%
+  → winrate_BiasRock_vs_BiasScissors: 0.388000 (head-to-head win rate)
+[TOURNAMENT]   BiasRock vs BiasScissors: 38.8%
+  → winrate_BiasPaper_vs_BiasRock: 0.411000 (head-to-head win rate)
+[TOURNAMENT]   BiasPaper vs BiasRock: 41.1%
+  → winrate_BiasPaper_vs_BiasPaper: 0.500000 (head-to-head win rate)
+[TOURNAMENT]   BiasPaper vs BiasPaper: 50.0%
+  → winrate_BiasPaper_vs_BiasScissors: 0.286000 (head-to-head win rate)
+[TOURNAMENT]   BiasPaper vs BiasScissors: 28.6%
+  → winrate_BiasScissors_vs_BiasRock: 0.289000 (head-to-head win rate)
+[TOURNAMENT]   BiasScissors vs BiasRock: 28.9%
+  → winrate_BiasScissors_vs_BiasPaper: 0.373000 (head-to-head win rate)
+[TOURNAMENT]   BiasScissors vs BiasPaper: 37.3%
+  → winrate_BiasScissors_vs_BiasScissors: 0.500000 (head-to-head win rate)
+[TOURNAMENT]   BiasScissors vs BiasScissors: 50.0%
+  → win_matrix recorded (Win rate matrix [i,j] = win rate of policy i vs j)
+
+──────────────────────────────────────────────────────────────────────
+  Ranking Analysis (Detecting Cycles)
+──────────────────────────────────────────────────────────────────────
+
+[RANKING] Average win rates (strength):
+[RANKING]   BiasPaper: 39.90%
+[RANKING]   BiasRock: 39.33%
+[RANKING]   BiasScissors: 38.73%
+  → avg_winrate_BiasRock: 0.393333 (average win rate across all opponents)
+  → avg_winrate_BiasPaper: 0.399000 (average win rate across all opponents)
+  → avg_winrate_BiasScissors: 0.387333 (average win rate across all opponents)
+[RANKING] Head-to-head matchups:
+[CYCLE] No strict cycles detected
+  → has_cycle: 0.000000 (whether cycle exists (1=yes))
+
+──────────────────────────────────────────────────────────────────────
+  Visualization
+──────────────────────────────────────────────────────────────────────
+
+[VIZ] Saved: tournament_heatmap.png
+
+──────────────────────────────────────────────────────────────────────
+  Experiment Summary
+──────────────────────────────────────────────────────────────────────
+
+✅ Non-transitivity analysis complete
+[FINDING] Linear ordering exists (transitive)
+  → experiment_results recorded (Tournament analysis)

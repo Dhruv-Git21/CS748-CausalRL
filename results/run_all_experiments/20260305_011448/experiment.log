@@ -1,0 +1,69 @@
+======================================================================
+Experiment: run_all_experiments
+Started: 2026-03-05T01:14:48.118455
+Output Directory: results/run_all_experiments/20260305_011448
+======================================================================
+
+
+──────────────────────────────────────────────────────────────────────
+  EXPERIMENT PIPELINE
+──────────────────────────────────────────────────────────────────────
+
+[START] Initializing full experiment run at 2026-03-05T01:14:48.118627
+[PLAN] Will execute 5 experiments sequentially:
+[PLAN]   1. exp_01_ope_works
+[PLAN]   2. exp_02_ope_fails_shift
+[PLAN]   3. exp_03_opponent_shift
+[PLAN]   4. exp_04_nontransitivity
+[PLAN]   5. exp_05_dominance_robust
+
+──────────────────────────────────────────────────────────────────────
+  EXPERIMENT EXECUTION
+──────────────────────────────────────────────────────────────────────
+
+[RUN] [1/5] exp_01_ope_works...
+✅   ✅ exp_01_ope_works completed
+[RUN] [2/5] exp_02_ope_fails_shift...
+✅   ✅ exp_02_ope_fails_shift completed
+[RUN] [3/5] exp_03_opponent_shift...
+✅   ✅ exp_03_opponent_shift completed
+[RUN] [4/5] exp_04_nontransitivity...
+✅   ✅ exp_04_nontransitivity completed
+[RUN] [5/5] exp_05_dominance_robust...
+✅   ✅ exp_05_dominance_robust completed
+
+──────────────────────────────────────────────────────────────────────
+  SUMMARY COMPILATION
+──────────────────────────────────────────────────────────────────────
+
+  → pipeline_summary recorded (Complete pipeline execution summary)
+[STATS] Completed: 5/5
+[STATS] Failed: 0/5
+
+──────────────────────────────────────────────────────────────────────
+  KEY FINDINGS
+──────────────────────────────────────────────────────────────────────
+
+[EXP_01] OPE rankings are perfect (ρ=1.0) when behavior policy has good coverage
+[EXP_02] OPE estimates are very noisy under distribution shift, but rankings preserved with WIS
+[EXP_03] Multi-agent OPE fails - policies ranked opposite ways across opponent pools (ρ=-1.0)
+[EXP_04] Non-transitive rankings possible in multi-agent competitive settings
+[EXP_05] Ranking-based selection is unstable across scenarios; dominance-based is more robust
+
+──────────────────────────────────────────────────────────────────────
+  RESEARCH CONTRIBUTIONS
+──────────────────────────────────────────────────────────────────────
+
+[CONTRIB_1] Demonstrated when and why OPE fails
+[CONTRIB_2] Showed ranking-based policy selection is unstable under distribution shift
+[CONTRIB_3] Proposed dominance-based evaluation as more robust alternative
+[CONTRIB_4] Identified multi-agent scenarios where policy rankings flip completely
+
+──────────────────────────────────────────────────────────────────────
+  CONCLUSION
+──────────────────────────────────────────────────────────────────────
+
+✅ ✅ All experiments executed successfully!
+[RESULTS] All results saved in timestamped directories under results/
+[RESULTS] Pipeline summary: results/run_all_experiments/20260305_011448/results.json
+[RESULTS] Detailed log: results/run_all_experiments/20260305_011448/experiment.log

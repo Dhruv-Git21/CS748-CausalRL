@@ -1,0 +1,77 @@
+{
+  "winrate_poolA_AllRock": {
+    "value": 0.1,
+    "description": "vs pool_A",
+    "timestamp": "2026-03-05T01:07:51.371204"
+  },
+  "winrate_poolA_AllPaper": {
+    "value": 0.57,
+    "description": "vs pool_A",
+    "timestamp": "2026-03-05T01:07:51.380820"
+  },
+  "winrate_poolA_AllScissors": {
+    "value": 0.305,
+    "description": "vs pool_A",
+    "timestamp": "2026-03-05T01:07:51.390593"
+  },
+  "winrate_poolB_AllRock": {
+    "value": 0.63,
+    "description": "vs pool_B",
+    "timestamp": "2026-03-05T01:07:51.537669"
+  },
+  "winrate_poolB_AllPaper": {
+    "value": 0.102,
+    "description": "vs pool_B",
+    "timestamp": "2026-03-05T01:07:51.546675"
+  },
+  "winrate_poolB_AllScissors": {
+    "value": 0.293,
+    "description": "vs pool_B",
+    "timestamp": "2026-03-05T01:07:51.555649"
+  },
+  "spearman_pool_A_vs_B": {
+    "value": -0.9999999999994997,
+    "description": "ranking correlation between pools",
+    "timestamp": "2026-03-05T01:07:51.555720"
+  },
+  "experiment_results": {
+    "data": {
+      "config": {
+        "game": "Rock-Paper-Scissors",
+        "pool_A": "60% Rock, 30% Paper, 10% Scissors",
+        "pool_B": "10% Rock, 30% Paper, 60% Scissors",
+        "n_trajectories": 5000,
+        "n_matches_eval": 1000
+      },
+      "policy_names": [
+        "AllRock",
+        "AllPaper",
+        "AllScissors"
+      ],
+      "winrate_pool_A": [
+        0.1,
+        0.57,
+        0.305
+      ],
+      "winrate_pool_B": [
+        0.63,
+        0.102,
+        0.293
+      ],
+      "ranking_A": [
+        1,
+        2,
+        0
+      ],
+      "ranking_B": [
+        0,
+        2,
+        1
+      ],
+      "spearman_correlation": -0.9999999999994997,
+      "ranking_flip": true
+    },
+    "description": "Multi-agent ranking analysis",
+    "timestamp": "2026-03-05T01:07:51.687193"
+  }
+}

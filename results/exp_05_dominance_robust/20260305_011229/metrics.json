@@ -1,0 +1,94 @@
+{
+  "experiment": "exp_05_dominance_robust",
+  "started": "2026-03-05T01:12:29.535720",
+  "completed": "2026-03-05T01:12:38.759806",
+  "duration_seconds": 9.224086,
+  "metrics": {
+    "true_value_\u03b5=0.0": {
+      "value": 0.8641306958139799,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:29.583590"
+    },
+    "true_value_\u03b5=0.1": {
+      "value": 0.8498040562909428,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:29.628426"
+    },
+    "true_value_\u03b5=0.3": {
+      "value": 0.8055782142522128,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:29.684382"
+    },
+    "true_value_\u03b5=0.5": {
+      "value": 0.7324143686069333,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:29.760935"
+    },
+    "true_value_\u03b5=0.8": {
+      "value": 0.38194661962864995,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:29.910922"
+    },
+    "ope_good_\u03b5=0.0": {
+      "value": 0.8641306958139797,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:30.299628"
+    },
+    "ope_good_\u03b5=0.1": {
+      "value": 0.8533919873203689,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:30.683948"
+    },
+    "ope_good_\u03b5=0.3": {
+      "value": 0.8047026893453424,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:31.070700"
+    },
+    "ope_good_\u03b5=0.5": {
+      "value": 0.600914746848477,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:31.459611"
+    },
+    "ope_good_\u03b5=0.8": {
+      "value": 0.4831737527394365,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:31.868851"
+    },
+    "ope_bad_\u03b5=0.0": {
+      "value": 0.0,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:33.262508"
+    },
+    "ope_bad_\u03b5=0.1": {
+      "value": 0.8279959859288376,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:34.642931"
+    },
+    "ope_bad_\u03b5=0.3": {
+      "value": 0.8185501224715316,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:36.015352"
+    },
+    "ope_bad_\u03b5=0.5": {
+      "value": 0.8491672143040853,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:37.384688"
+    },
+    "ope_bad_\u03b5=0.8": {
+      "value": 0.7988275419827404,
+      "description": "",
+      "timestamp": "2026-03-05T01:12:38.744468"
+    },
+    "ranking_consistent": {
+      "value": 0.0,
+      "description": "selection consistency (1=same policy selected)",
+      "timestamp": "2026-03-05T01:12:38.744513"
+    },
+    "n_dominant_policies": {
+      "value": 3.0,
+      "description": "number of robust policies selected",
+      "timestamp": "2026-03-05T01:12:38.744633"
+    }
+  },
+  "output_directory": "results/exp_05_dominance_robust/20260305_011229"
+}

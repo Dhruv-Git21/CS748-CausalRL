@@ -1,8 +1,0 @@
-{
-  "experiment": "exp_02_ope_fails_shift",
-  "started": "2026-03-05T01:00:51.836636",
-  "completed": "2026-03-05T01:00:51.836836",
-  "duration_seconds": 0.0002,
-  "metrics": {},
-  "output_directory": "results/exp_02_ope_fails_shift/20260305_010051"
-}

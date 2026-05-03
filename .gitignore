@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Experiment results (auto-generated, not source)
+results/
+experiments/results/
+
+# Analysis outputs
+DETAILED_ANALYSIS/
+*.png
+
+# Loose report/doc files (not part of repo)
+*REPORT*.md
+*SUMMARY*.md
+*ANALYSIS*.md
+HANDOFF.md
+FINAL_*.md
+PROJECT_*.md
+FILES_CREATED.txt
+QUICK*.md
+REORGANIZATION*.md
+RESEARCH*.md
+SRC_CODE_INTEGRATION.md
+START_HERE.md
+STRUCTURE*.md
+V2_SUMMARY.md
+VERIFY_*.sh
+00_START_HERE.md
+INDEX.md
+generate_comparison.py
+generate_master_figure.py
+create_*.py
+run_all_experiments.py
+docs/
+theory/
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Claude
+.claude/

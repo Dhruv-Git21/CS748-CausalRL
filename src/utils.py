@@ -200,3 +200,79 @@ def save_json(path: str | Path, obj: Dict[str, Any]) -> None:
 def load_json(path: str | Path) -> Dict[str, Any]:
     """Load JSON file."""
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def collect_shared_batch(
+    env: Gridworld,
+    beh: TabularPolicy,
+    policies: list,
+    N: int,
+    T: int,
+    seed: int = 0,
+) -> tuple:
+    """
+    Collect ONE shared batch under behavior policy and compute importance weights
+    for all evaluation policies on the SAME trajectories.
+
+    This is the correct setup for counterfactual PoR estimation: all policies
+    are compared in the same trajectory contexts, enabling matched-pair comparison.
+
+    Args:
+        env: Gridworld environment
+        beh: Behavior policy (data collection)
+        policies: List of K evaluation policies
+        N: Number of shared trajectories
+        T: Trajectory length
+        seed: Random seed
+
+    Returns:
+        (base_batch, weights_list) where:
+          - base_batch: TrajectoryBatch collected under beh (pi_probs = beh probs)
+          - weights_list: K arrays of (N,) trajectory IS ratios pi_k/beh for shared batch
+    """
+    rng = np.random.default_rng(seed)
+    K = len(policies)
+
+    rewards = np.zeros((N, T), dtype=float)
+    actions = np.zeros((N, T), dtype=int)
+    states = np.zeros((N, T), dtype=int)
+    beh_p = np.zeros((N, T), dtype=float)
+    dones = np.zeros((N, T), dtype=bool)
+    # Store all policy probs for shared trajectories
+    pi_p_all = np.zeros((K, N, T), dtype=float)
+
+    for i in range(N):
+        s = env.reset()
+        for t in range(T):
+            a = beh.act(s, rng)
+            s2, r, done, _ = env.step(a, rng)
+            rewards[i, t] = r
+            actions[i, t] = a
+            states[i, t] = s
+            beh_p[i, t] = beh.prob(s, a)
+            for k, pi in enumerate(policies):
+                pi_p_all[k, i, t] = pi.prob(s, a)
+            dones[i, t] = done
+            s = s2
+            if done:
+                for tt in range(t + 1, T):
+                    states[i, tt] = s
+                    actions[i, tt] = a
+                    beh_p[i, tt] = beh_p[i, t]
+                    for k in range(K):
+                        pi_p_all[k, i, tt] = pi_p_all[k, i, t]
+                    rewards[i, tt] = 0.0
+                    dones[i, tt] = True
+                break
+
+    # Build shared batch (pi_probs = beh for reference)
+    base_batch = TrajectoryBatch(rewards, actions, states, beh_p, beh_p.copy(), dones)
+
+    # Compute trajectory-level IS ratios pi_k / beh for each policy
+    weights_list = []
+    for k in range(K):
+        ratio = pi_p_all[k] / (beh_p + 1e-12)  # (N, T)
+        traj_ratio = np.prod(ratio, axis=1)       # (N,)
+        weights_list.append(traj_ratio)
+
+    return base_batch, weights_list

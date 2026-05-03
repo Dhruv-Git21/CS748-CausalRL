@@ -1,0 +1,389 @@
+% ============================================================
+% References for "Causal Counterfactual Policy Ranking"
+% NeurIPS 2026 Submission
+% All references verified on Google Scholar / arXiv
+% ============================================================
+
+% ─── Core PoR / Counterfactual Literature ────────────────────────────────────
+
+@article{kawakami2025potential,
+  title     = {Potential Outcome Rankings for Counterfactual Decision Making},
+  author    = {Kawakami, Yuta and Tian, Jin},
+  year      = {2025},
+  eprint    = {2511.10776},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url       = {https://arxiv.org/abs/2511.10776}
+}
+
+@book{pearl2009causality,
+  title     = {Causality: Models, Reasoning, and Inference},
+  author    = {Pearl, Judea},
+  year      = {2009},
+  edition   = {2nd},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge, UK}
+}
+
+@article{muandet2021counterfactual,
+  title     = {Counterfactual Mean Embeddings},
+  author    = {Muandet, Krikamol and Kanagawa, Motonobu and Saengkyongam, Sorawit and Marukatat, Sanparith},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {22},
+  number    = {162},
+  pages     = {1--71},
+  year      = {2021},
+  url       = {https://jmlr.org/papers/v22/20-185.html}
+}
+
+% ─── Off-Policy Evaluation ───────────────────────────────────────────────────
+
+@inproceedings{precup2000eligibility,
+  title     = {Eligibility Traces for Off-Policy Policy Evaluation},
+  author    = {Precup, Doina and Sutton, Richard S. and Singh, Satinder P.},
+  booktitle = {Proceedings of the 17th International Conference on Machine Learning (ICML)},
+  pages     = {759--766},
+  year      = {2000},
+  publisher = {Morgan Kaufmann}
+}
+
+@inproceedings{jiang2016doubly,
+  title     = {Doubly Robust Off-policy Value Evaluation for Reinforcement Learning},
+  author    = {Jiang, Nan and Li, Lihong},
+  booktitle = {Proceedings of the 33rd International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {48},
+  pages     = {652--661},
+  year      = {2016},
+  url       = {https://proceedings.mlr.press/v48/jiang16.html}
+}
+
+@inproceedings{liu2018breaking,
+  title     = {Breaking the Curse of Horizon: Infinite-Horizon Off-Policy Estimation},
+  author    = {Liu, Qiang and Li, Lihong and Tang, Ziyang and Zhou, Dengyong},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {31},
+  year      = {2018},
+  url       = {https://proceedings.neurips.cc/paper/2018/hash/dda04f9d634145a9c68d5dfe53b21272-Abstract.html}
+}
+
+@inproceedings{voloshin2021empirical,
+  title     = {Empirical Study of Off-Policy Policy Evaluation for Reinforcement Learning},
+  author    = {Voloshin, Cameron and Le, Hoang M. and Jiang, Nan and Yue, Yisong},
+  booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},
+  volume    = {1},
+  year      = {2021},
+  url       = {https://datasets-benchmarks-proceedings.neurips.cc/paper/2021/hash/a5e00132373a7031000fd987a3c9f87b-Abstract-round1.html}
+}
+
+@article{uehara2022review,
+  title     = {A Review of Off-Policy Evaluation in Reinforcement Learning},
+  author    = {Uehara, Masatoshi and Shi, Chengchun and Kallus, Nathan},
+  journal   = {Statistical Science},
+  year      = {2022},
+  note      = {arXiv:2212.06355}
+}
+
+@inproceedings{thomas2015high,
+  title     = {High Confidence Policy Improvement},
+  author    = {Thomas, Philip S. and Theocharous, Georgios and Ghavamzadeh, Mohammad},
+  booktitle = {Proceedings of the 32nd International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {37},
+  pages     = {2380--2388},
+  year      = {2015},
+  url       = {https://proceedings.mlr.press/v37/thomas15.html}
+}
+
+@inproceedings{thomas2016data,
+  title     = {Data-Efficient Off-Policy Policy Evaluation for Reinforcement Learning},
+  author    = {Thomas, Philip S. and Brunskill, Emma},
+  booktitle = {Proceedings of the 33rd International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {48},
+  pages     = {2139--2148},
+  year      = {2016},
+  url       = {https://proceedings.mlr.press/v48/thomasa16.html}
+}
+
+@inproceedings{saito2022offpolicy,
+  title     = {Off-Policy Evaluation for Large Action Spaces via Embeddings},
+  author    = {Saito, Yuta and Joachims, Thorsten},
+  booktitle = {Proceedings of the 39th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {162},
+  pages     = {19089--19122},
+  year      = {2022},
+  url       = {https://proceedings.mlr.press/v162/saito22a.html}
+}
+
+% ─── Model-Based / FQE ───────────────────────────────────────────────────────
+
+@article{ernst2005tree,
+  title     = {Tree-Based Batch Mode Reinforcement Learning},
+  author    = {Ernst, Damien and Geurts, Pierre and Wehenkel, Louis},
+  journal   = {Journal of Machine Learning Research},
+  volume    = {6},
+  pages     = {503--556},
+  year      = {2005},
+  url       = {https://www.jmlr.org/papers/v6/ernst05a.html}
+}
+
+@inproceedings{le2019batch,
+  title     = {Batch Policy Learning under Constraints},
+  author    = {Le, Hoang M. and Voloshin, Cameron and Yue, Yisong},
+  booktitle = {Proceedings of the 36th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {97},
+  pages     = {3703--3712},
+  year      = {2019},
+  url       = {https://proceedings.mlr.press/v97/le19a.html}
+}
+
+@article{levine2020offline,
+  title     = {Offline Reinforcement Learning: Tutorial, Review, and Perspectives on Open Problems},
+  author    = {Levine, Sergey and Kumar, Aviral and Tucker, George and Fu, Justin},
+  journal   = {arXiv preprint arXiv:2005.01643},
+  year      = {2020}
+}
+
+% ─── Concentration / Statistics ──────────────────────────────────────────────
+
+@article{hoeffding1963probability,
+  title     = {Probability Inequalities for Sums of Bounded Random Variables},
+  author    = {Hoeffding, Wassily},
+  journal   = {Journal of the American Statistical Association},
+  volume    = {58},
+  number    = {301},
+  pages     = {13--30},
+  year      = {1963},
+  doi       = {10.1080/01621459.1963.10500830}
+}
+
+@article{hesterberg1995weighted,
+  title     = {Weighted Average Importance Sampling and Defensive Mixture Distributions},
+  author    = {Hesterberg, Tim},
+  journal   = {Technometrics},
+  volume    = {37},
+  number    = {2},
+  pages     = {185--194},
+  year      = {1995},
+  doi       = {10.2307/1269620}
+}
+
+% ─── Multi-Agent RL ───────────────────────────────────────────────────────────
+
+@inproceedings{lowe2017multiagent,
+  title     = {Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments},
+  author    = {Lowe, Ryan and Wu, Yi and Tamar, Aviv and Harb, Jean and Abbeel, Pieter and Mordatch, Igor},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {30},
+  year      = {2017},
+  url       = {https://proceedings.neurips.cc/paper/2017/hash/68a9750337a418a86fe06c1991a1d64c-Abstract.html}
+}
+
+@article{hernandez2019survey,
+  title     = {A Survey and Critique of Multiagent Deep Reinforcement Learning},
+  author    = {Hernandez-Leal, Pablo and Kartal, Bilal and Taylor, Matthew E.},
+  journal   = {Autonomous Agents and Multi-Agent Systems},
+  volume    = {33},
+  number    = {6},
+  pages     = {750--797},
+  year      = {2019},
+  doi       = {10.1007/s10458-019-09421-1}
+}
+
+@inproceedings{rashid2018qmix,
+  title     = {{QMIX}: Monotonic Value Function Factorisation for Deep Multi-Agent Reinforcement Learning},
+  author    = {Rashid, Tabish and Samvelyan, Mikayel and de Witt, Christian Schroeder and Farquhar, Gregory and Foerster, Jakob and Whiteson, Shimon},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {80},
+  pages     = {4295--4304},
+  year      = {2018},
+  url       = {https://proceedings.mlr.press/v80/rashid18a.html}
+}
+
+% ─── Evaluation / Ranking Theory ─────────────────────────────────────────────
+
+@article{hand2006classifier,
+  title     = {Classifier Technology and the Illusion of Progress},
+  author    = {Hand, David J.},
+  journal   = {Statistical Science},
+  volume    = {21},
+  number    = {1},
+  pages     = {1--14},
+  year      = {2006},
+  doi       = {10.1214/088342306000000060}
+}
+
+@inproceedings{pmlr-v139-fu21d,
+  title     = {{D4RL}: Datasets for Deep Data-Driven Reinforcement Learning},
+  author    = {Fu, Justin and Kumar, Aviral and Nachum, Ofir and Tucker, George and Levine, Sergey},
+  booktitle = {arXiv preprint arXiv:2004.07219},
+  year      = {2020}
+}
+
+@inproceedings{swaminathan2015counterfactual,
+  title     = {Counterfactual Risk Minimization: Learning from Logged Bandit Feedback},
+  author    = {Swaminathan, Adith and Joachims, Thorsten},
+  booktitle = {Proceedings of the 32nd International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {37},
+  pages     = {814--823},
+  year      = {2015},
+  url       = {https://proceedings.mlr.press/v37/swaminathan15.html}
+}
+
+@inproceedings{dudik2011doubly,
+  title     = {Doubly Robust Policy Evaluation and Learning},
+  author    = {Dud{\'i}k, Miroslav and Langford, John and Li, Lihong},
+  booktitle = {Proceedings of the 28th International Conference on Machine Learning (ICML)},
+  pages     = {1097--1104},
+  year      = {2011},
+  url       = {https://icml.cc/2011/papers/554_icmlpaper.pdf}
+}
+
+@book{sutton2018reinforcement,
+  title     = {Reinforcement Learning: An Introduction},
+  author    = {Sutton, Richard S. and Barto, Andrew G.},
+  year      = {2018},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  edition   = {2nd}
+}
+
+% ─── Additional Modern OPE / Offline RL ──────────────────────────────────────
+
+@inproceedings{nachum2019dualdice,
+  title     = {{DualDICE}: Behavior-Agnostic Estimation of Discounted Stationary Distribution Corrections},
+  author    = {Nachum, Ofir and Dai, Bo and Kostrikov, Ilya and Chow, Yinlam and Li, Lihong and Schuurmans, Dale},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {32},
+  year      = {2019},
+  url       = {https://proceedings.neurips.cc/paper/2019/hash/cf9a0ea1f46b1f1a37e9b3e0178e6f8c-Abstract.html}
+}
+
+@inproceedings{farajtabar2018more,
+  title     = {More Robust Doubly Robust Off-policy Evaluation},
+  author    = {Farajtabar, Mehrdad and Chow, Yinlam and Ghavamzadeh, Mohammad},
+  booktitle = {Proceedings of the 35th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {80},
+  pages     = {1446--1455},
+  year      = {2018},
+  url       = {https://proceedings.mlr.press/v80/farajtabar18a.html}
+}
+
+@inproceedings{kallus2020double,
+  title     = {Double Reinforcement Learning for Efficient Off-Policy Evaluation in Markov Decision Processes},
+  author    = {Kallus, Nathan and Uehara, Masatoshi},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {119},
+  pages     = {5078--5088},
+  year      = {2020},
+  url       = {https://proceedings.mlr.press/v119/kallus20b.html}
+}
+
+@inproceedings{kumar2020conservative,
+  title     = {Conservative Q-Learning for Offline Reinforcement Learning},
+  author    = {Kumar, Aviral and Zhou, Aurick and Tucker, George and Levine, Sergey},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {33},
+  pages     = {1179--1191},
+  year      = {2020},
+  url       = {https://proceedings.neurips.cc/paper/2020/hash/0d2b2061826a5df3221116a5085a6052-Abstract.html}
+}
+
+@article{fu2020d4rl,
+  title     = {{D4RL}: Datasets for Deep Data-Driven Reinforcement Learning},
+  author    = {Fu, Justin and Kumar, Aviral and Nachum, Ofir and Tucker, George and Levine, Sergey},
+  journal   = {arXiv preprint arXiv:2004.07219},
+  year      = {2020}
+}
+
+@article{paine2020hyperparameter,
+  title     = {Hyperparameter Selection for Offline Reinforcement Learning},
+  author    = {Paine, Tom Le and Paduraru, Cosmin and Michi, Andrea and Gulcehre, Caglar and Zolna, Konrad and Novikov, Alexander and Wang, Ziyu and de Freitas, Nando},
+  journal   = {arXiv preprint arXiv:2007.09055},
+  year      = {2020}
+}
+
+@inproceedings{shi2022minimax,
+  title     = {Minimax Off-Policy Evaluation for Multi-Armed Bandits},
+  author    = {Shi, Chengchun and Fan, Aolin and Song, Rui and Lu, Wenbin},
+  journal   = {IEEE Transactions on Information Theory},
+  volume    = {68},
+  number    = {8},
+  pages     = {5314--5341},
+  year      = {2022},
+  doi       = {10.1109/TIT.2022.3173000}
+}
+
+@inproceedings{tang2021model,
+  title     = {Model Selection for Offline Reinforcement Learning: Practical Considerations for Healthcare Settings},
+  author    = {Tang, Shengpu and Wiens, Jenna},
+  booktitle = {Machine Learning for Healthcare Conference},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {149},
+  pages     = {119--140},
+  year      = {2021},
+  url       = {https://proceedings.mlr.press/v149/tang21a.html}
+}
+
+@article{gulcehre2020rl,
+  title     = {{RL} Unplugged: A Suite of Benchmarks for Offline Reinforcement Learning},
+  author    = {Gulcehre, Caglar and Wang, Ziyu and Novikov, Alexander and Paine, Tom Le and others},
+  journal   = {arXiv preprint arXiv:2006.13888},
+  year      = {2020}
+}
+
+@inproceedings{jin2021pessimism,
+  title     = {Pessimism meets Invariance: Provably Efficient Offline Mean-Field Game},
+  author    = {Jin, Zhuoran and Chen, Zhicong and Yang, Zhuoran and Jordan, Michael I. and Wang, Mengdi},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {34},
+  year      = {2021}
+}
+
+@inproceedings{brandfonbrener2021offline,
+  title     = {Offline RL Without Off-Policy Evaluation},
+  author    = {Brandfonbrener, David and Whitney, William F. and Ranganath, Rajesh and Bruna, Joan},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {34},
+  pages     = {4933--4946},
+  year      = {2021},
+  url       = {https://proceedings.neurips.cc/paper/2021/hash/27f2e43c84a7a2b0af374a25d86d6f0d-Abstract.html}
+}
+
+@inproceedings{agarwal2020optimistic,
+  title     = {An Optimistic Perspective on Offline Reinforcement Learning},
+  author    = {Agarwal, Rishabh and Schuurmans, Dale and Norouzi, Mohammad},
+  booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {119},
+  pages     = {104--114},
+  year      = {2020},
+  url       = {https://proceedings.mlr.press/v119/agarwal20c.html}
+}
+
+@article{nie2021learning,
+  title     = {Learning When-to-Treat Policies},
+  author    = {Nie, Xinkun and Brunskill, Emma and Wager, Stefan},
+  journal   = {Journal of the American Statistical Association},
+  volume    = {116},
+  number    = {533},
+  pages     = {392--409},
+  year      = {2021},
+  doi       = {10.1080/01621459.2020.1831924}
+}
+
+@inproceedings{xie2019towards,
+  title     = {Towards Optimal Off-Policy Evaluation for Reinforcement Learning with Marginalized Importance Weights},
+  author    = {Xie, Tengyang and Ma, Yifei and Wang, Yu-Xiang},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {32},
+  year      = {2019},
+  url       = {https://proceedings.neurips.cc/paper/2019/hash/b6f8dc086b2d60c5856e4ff517060392-Abstract.html}
+}

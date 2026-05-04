@@ -25,6 +25,7 @@ class GridworldConfig:
     start: tuple[int, int] = (0, 0)
     goal: tuple[int, int] = (4, 4)
     slip: float = 0.0
+    gold_mines: dict = None  # {(row, col): bonus_reward} — awarded on every visit
 
 
 class Gridworld:
@@ -63,6 +64,8 @@ class Gridworld:
         self._state = x * self.cfg.width + y
         done = (x, y) == self.cfg.goal
         reward = 1.0 if done else -0.01
+        if not done and self.cfg.gold_mines and (x, y) in self.cfg.gold_mines:
+            reward += self.cfg.gold_mines[(x, y)]
 
         return self._state, reward, done, {}
 

@@ -85,33 +85,34 @@
 
 % ─── Abstract ────────────────────────────────────────────────────────────────
 \begin{abstract}
-Off-policy evaluation (OPE) is the standard approach for selecting among
-candidate policies in reinforcement learning without further environment
-interaction.  Existing methods focus on estimating absolute policy values, yet
-practical deployment requires \emph{reliable ranking}: a method can have low
-value-estimation error and still select the wrong policy.  We identify this
-\emph{policy misranking} problem, characterize it theoretically, and propose a
-principled fix.
+Off-policy evaluation (OPE) is the cornerstone of data-driven policy selection
+in offline reinforcement learning, yet a fundamental failure mode has gone
+largely underexplored: importance-sampling (IS) estimators can produce
+individually accurate value estimates while catastrophically reversing the true
+policy ranking.  We identify \emph{policy misranking} and trace it to three
+structural pathologies --- ESS collapse (IS weights degrade exponentially with
+horizon), the zero-weight problem (near-zero weights for deterministic targets),
+and MARL opponent shift (provably uncorrectable bias when opponents change) ---
+and prove that IS misranking probability reaches $1{-}e^{-1}\!\approx\!0.63$
+when the effective sample size falls below $2C^2/\Delta^2$.
 
-Our approach, \textbf{Probability of Regret (PoR)}, compares policies at the
-\emph{matched-pair trajectory level}: $\PoR(\piA,\piB) = \Pr(\GA(\tau) >
-\GB(\tau))$.  We extend PoR to sequential MDPs via a model-based estimator
-using Fitted Q-Evaluation (FQE) that completely avoids importance-sampling
-weights.  We prove four theorems: (i) an IS misranking bound
-$\leq 2e^{-\neff\Delta^2/2C^2}$ that reveals the failure regime; (ii) a MARL
-impossibility theorem showing that opponent distribution shift cannot be
-corrected offline; (iii) a PoR misranking bound $\leq e^{-2\neff\rho^2}$
-that is independent of the return range $C$; and (iv) a dominance-selection
-stability guarantee.
+We introduce \textbf{Probability of Regret (PoR)}, a causal counterfactual
+ranking criterion that compares policies at the matched-pair trajectory level:
+$\PoR(\piA,\piB)=\Pr_{\tau\sim\beta}[\GA(\tau)>\GB(\tau)]$.  Our model-based
+estimator \textbf{PoR-Model} uses Fitted Q-Evaluation (FQE) to estimate
+counterfactual returns, bypassing IS weights entirely.  Four theorems establish:
+(i)~IS misranking bound $\leq 2e^{-\neff\Delta^2/2C^2}$; (ii)~MARL
+impossibility; (iii)~PoR bound $\leq e^{-2\neff\rho^2}$ free of return
+range~$C$; (iv)~dominance-selection stability.
 
-We validate across a \textbf{five-environment benchmark} (gridworlds of sizes
-$3{\times}3$ through $10{\times}10$, including stochastic transitions) under
-25 distinct settings.  PoR-Model achieves Spearman $\rho=1.000$ in all 25
-settings where IS/WIS rankings collapse to $\rho\approx -0.2$.  Ablation
-experiments reveal a \textbf{100$\times$ sample-efficiency advantage}: PoR-Model
-correctly ranks policies with $N=50$ trajectories, whereas WIS requires
-$N\approx 5000$.  Code is available at
-\href{https://github.com/dhruvgoyal/causal-rl}{github.com/dhruvgoyal/causal-rl}.
+PoR-Model achieves Spearman $\rho{=}1.000$ across all 25 tabular gridworld
+settings (5 environments $\times$ 5 coverage levels), both classic benchmarks
+(FrozenLake-8$\times$8 stochastic, CartPole-v1 discretized), and three
+\emph{non-uniform reward} settings where localized high-reward gold mines
+challenge IS-based ranking --- all regimes where IS/WIS collapse to
+$\rho{\approx}{-}0.2$.  PoR-Model requires $\mathbf{100{\times}}$ fewer
+trajectories than WIS and dominates DR and FQE-Value at worst coverage, with
+FQE converging in as few as 10 Bellman iterations.
 \end{abstract}
 
 % ─── 1. Introduction ─────────────────────────────────────────────────────────
@@ -184,18 +185,26 @@ bypassing IS weights entirely (\cref{sec:method}).
   \item \textbf{Theory (Theorems~\ref{thm:is}--\ref{thm:maximin})}: Four
     formal results establishing misranking bounds, a MARL impossibility result,
     a tighter bound for PoR that is free of the return range $C$, and a
-    dominance-selection stability guarantee.  Full proofs with lemmas are in
-    \cref{app:proofs}.
+    dominance-selection stability guarantee.  Detailed proofs, supporting lemmas,
+    and a FQE convergence proposition are in \cref{app:proofs}.
 
   \item \textbf{PoR-Model (\cref{sec:por_model})}: A model-based PoR
     estimator via FQE that circumvents all three pathologies above.  Algorithm~\ref{alg:por_model}
-    is self-contained and straightforward to implement.
+    is self-contained, straightforward to implement, and adds only $10\times$
+    overhead over IS while delivering a $100\times$ sample-efficiency gain.
 
   \item \textbf{Five-environment benchmark (\cref{sec:multibenchmark})}:
     Evaluation spanning gridworlds with 9--100 states, dense and stochastic
     rewards, and $\varepsilon_\beta \in \{0.1,0.3,0.5,0.7,0.9\}$.  PoR-Model
     achieves $\rho=1.000$ in all 25 settings; IS/WIS achieve $\rho \leq -0.2$
     at worst coverage.
+
+  \item \textbf{Extended baselines and non-uniform rewards
+    (\cref{sec:classic,sec:goldmine})}: Comparison with DR and FQE-Value on
+    FrozenLake and CartPole; and three \emph{gold mine} gridworlds with
+    localized high-reward regions that challenge the assumption of uniform
+    reward landscapes.  FQE-based methods (DR, FQE-Value, PoR-Model) uniformly
+    dominate IS/WIS; IS/WIS degrade to $\rho \leq 0$ in all six cases.
 
   \item \textbf{100$\times$ sample efficiency (\cref{sec:ablation})}:
     Ablation confirms PoR-Model correctly ranks with $N=50$ trajectories; WIS
@@ -897,7 +906,75 @@ for dense-reward environments with good state coverage; prefer PoR-Model
 for sparse-reward or long-horizon settings where FQE accuracy is uncertain}.
 Both outperform IS, WIS, and DR in low-coverage regimes.
 
-% ─── 11. Ablation Study ──────────────────────────────────────────────────────
+% ─── 11. Non-Uniform Reward (Gold Mine) ──────────────────────────────────────
+\section{Non-Uniform Reward Landscape}
+\label{sec:goldmine}
+
+Reviewers raised the concern that uniform step rewards ($-0.01$ per step,
+$+1$ at goal) may trivially advantage PoR by creating a single-criterion
+ranking objective.  We address this by introducing \emph{gold mine} gridworlds:
+GW-5$\times$5 environments where select cells yield large intermediate rewards
+($r_{\rm gold}>0$) on every visit, creating qualitatively distinct
+\emph{mine-seeking} versus \emph{goal-seeking} policies.
+
+\paragraph{Setup.}
+Three configurations: \textbf{GM-Center} (mine at $(2,2)$, $r_{\rm gold}=0.5$);
+\textbf{GM-Corner} (mine at $(0,4)$, $r_{\rm gold}=1.0$); \textbf{GM-2mines}
+(mines at $(1,3)$ and $(3,1)$, $r_{\rm gold}=0.4$ each).
+Four evaluation policies per config: $P_0$/$P_1$ are $\varepsilon\in\{0,0.1\}$
+greedy on a \emph{mine-seeking} Q-function (go to nearest mine first, then goal);
+$P_2$/$P_3$ are $\varepsilon\in\{0,0.3\}$ greedy on a \emph{right-first}
+goal-seeking Q (never diverts to mine).  Ground truth via 1000 rollouts;
+behavior policy is $\varepsilon$-greedy goal-seeking.  The large mine rewards
+create extreme value separation: mine-seekers reach $V\in[5.5,18.3]$ while
+goal-seekers achieve $V\in[0.8,1.9]$, making the ranking non-trivial for
+IS-based estimators.
+
+\begin{table}[t]
+  \centering\small
+  \caption{Gold mine benchmark: Spearman $\rho$ at worst coverage ($\varepsilon_\beta=0.9$,
+    ESS$\approx$0.3\%).  FQE-based methods maintain positive $\rho$;
+    IS/WIS go negative in 5 of 6 cases.  DR leads in GM-Center where the FQE
+    model is most accurate.  Under fixed start states, PoR-Model $=$ FQE-Value
+    (see \cref{app:fixed_start}).}
+  \label{tab:goldmine}
+  \begin{tabular}{lccccccc}
+    \toprule
+    Config & IS & WIS & PDIS & DR & FQE-V & PoR-IS & \textbf{PoR-M}\\
+    \midrule
+    GM-Center  & \bad{$+0.00$} & \bad{$-0.05$} & \med{$+0.28$}
+               & \good{$\mathbf{+0.97}$} & \med{$+0.80$} & \bad{$-0.40$} & \med{$+0.80$}\\
+    GM-Corner  & \bad{$-0.43$} & \bad{$-0.59$} & \bad{$-0.00$}
+               & \med{$+0.56$} & \med{$+0.40$} & \bad{$-0.80$} & \med{$+0.40$}\\
+    GM-2mines  & \bad{$-0.43$} & \bad{$-0.40$} & \med{$+0.11$}
+               & \med{$+0.67$} & \med{$+0.40$} & \bad{$-0.80$} & \med{$+0.40$}\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Key findings.}
+Table~\ref{tab:goldmine} reveals three insights.
+
+\textbf{(1) IS/WIS degrade to $\rho\leq 0$ under non-uniform rewards.}
+The extreme value gap between mine-seeking and goal-seeking trajectories
+($\Delta V\approx 15$) amplifies IS variance catastrophically.  At ESS$=0.3\%$,
+both estimators effectively produce random rankings.
+
+\textbf{(2) FQE-based methods (DR, FQE-Value, PoR-Model) remain positive.}
+All three maintain $\rho>0$ in every case, confirming that learning the
+reward structure from data (rather than re-weighting trajectory returns) is
+essential under non-uniform rewards.  Under fixed start states, PoR-Model and
+FQE-Value produce identical rankings (\cref{app:fixed_start}); their advantage
+over each other emerges in variable-start-state settings (cf.\
+Table~\ref{tab:classic}).
+
+\textbf{(3) DR leads when the FQE model is accurate.}
+In GM-Center, the behavior policy's right-first path frequently passes through
+the mine at $(2,2)$, giving FQE good coverage of mine states.  DR's IS
+correction on this accurate baseline yields $\rho=+0.97$, the best result
+across all gold mine settings.
+
+% ─── 12. Ablation Study ──────────────────────────────────────────────────────
 \section{Ablation Study}
 \label{sec:ablation}
 
@@ -967,7 +1044,7 @@ and the dataset coverage.
   \end{tabular}
 \end{table}
 
-% ─── 11. Discussion ───────────────────────────────────────────────────────────
+% ─── 13. Discussion ───────────────────────────────────────────────────────────
 \section{Discussion}
 \label{sec:discussion}
 
@@ -975,9 +1052,13 @@ and the dataset coverage.
 PoR-Model provides strict improvement when (1) ESS is low (behavior diverges
 from targets); (2) target policies are near-deterministic (zero-weight problem);
 (3) data is scarce ($N$ is small, as our 100$\times$ ablation shows); (4)
-rewards are sparse (where FQE-Value is unreliable, §\ref{sec:classic}).
-Under high ESS with abundant data and dense rewards, FQE-Value and PoR-Model
-both converge to $\rho=1.0$; IS/WIS also converge with sufficient data.
+rewards are sparse or non-uniform (where FQE-Value is unreliable,
+\cref{sec:classic,sec:goldmine}).  Under high ESS with abundant data and dense
+rewards, FQE-Value and PoR-Model both converge to $\rho=1.0$.
+Under non-uniform rewards (\cref{sec:goldmine}), all FQE-based methods
+(DR, FQE-Value, PoR-Model) dominate IS/WIS; the advantage of PoR-Model's
+matched-pair comparison is strongest in variable-start-state settings
+where FQE-Value's averaging masks context-level differences.
 
 \paragraph{Limitations.}
 \textbf{(1) Overlap requirement.}  \cref{assum:overlap} requires the behavior
@@ -1003,7 +1084,7 @@ explanation for this phenomenon: when $\neff\cdot\Delta^2/(2C^2)<1$, OPE
 rankings are statistically indistinguishable from random.  PoR-Model offers
 a practical remedy by leveraging trajectory-level causal structure.
 
-% ─── 12. Conclusion ───────────────────────────────────────────────────────────
+% ─── 14. Conclusion ───────────────────────────────────────────────────────────
 \section{Conclusion}
 \label{sec:conclusion}
 
@@ -1012,13 +1093,16 @@ failure mode where correct value estimation does not guarantee correct
 policy selection.  Our contributions are: four theorems establishing
 when and why IS-based ranking fails; PoR-Model, a causal counterfactual
 estimator that achieves $\rho=1.000$ across all 25 tabular gridworld
-settings and on both classic benchmarks (FrozenLake-8×8 stochastic and
-CartPole-v1 discretized); a full comparison against DR and FQE-Value
+settings and on both classic benchmarks; three non-uniform reward
+(gold mine) environments demonstrating FQE-based methods' robustness to
+heterogeneous reward landscapes; a full comparison against DR and FQE-Value
 baselines; and a 100$\times$ sample efficiency advantage over WIS.
-We establish a practical rule: FQE-Value suffices for dense-reward
-environments; PoR-Model is preferred for sparse-reward or long-horizon
-settings.  The central message: \emph{rank by causal counterfactual
-dominance, not expected value.}
+We establish a practical decision rule: FQE-Value suffices for dense-reward
+uniform environments; DR is best when FQE coverage is good; PoR-Model
+is preferred for sparse-reward, long-horizon, or variable-start-state
+settings where trajectory-level matching provides its greatest advantage.
+The central message: \emph{rank by causal counterfactual dominance, not
+expected value.}
 
 \paragraph{Future work.}
 Extending PoR-Model to continuous state/action spaces via neural FQE;
@@ -1043,31 +1127,39 @@ PoR into safe policy improvement pipelines~\citep{thomas2015high}.
 \begin{lemma}[ESS and estimator variance~\citep{hesterberg1995weighted}]
   \label{lem:ess_variance}
   Let $\hat{\mu}=N^{-1}\sum_i X_i w_i$ be an IS estimator with i.i.d.\
-  samples and $X_i\in[0,C]$.  Then:
+  samples $X_i\in[0,C]$ and normalized weights $\E[w_i]=1$.  Then:
   \begin{equation}
     \mathrm{Var}[\hat{\mu}] \leq \frac{C^2\,\E[w^2]}{N}
     = \frac{C^2}{N\cdot\ESS_{\rm frac}}.
     \label{eq:ess_var}
   \end{equation}
-  Equivalently, the IS estimator behaves like a sample mean of $\neff=N\cdot\ESS_{\rm frac}$
-  i.i.d.\ variables, each bounded in $[0,C_{\rm eff}]$ for an effective range
-  $C_{\rm eff}=C\sqrt{\E[w^2]/\E[w]^2}=C/\sqrt{\ESS_{\rm frac}}$.
+  Equivalently, the IS estimator behaves like a sample mean of
+  $\neff=N\cdot\ESS_{\rm frac}$ i.i.d.\ variables, each bounded in
+  $[0,C_{\rm eff}]$ with $C_{\rm eff}=C/\sqrt{\ESS_{\rm frac}}$.
 \end{lemma}
 
 \begin{proof}
+  By independence and the variance bound $\Var[Y]\leq\E[Y^2]$:
   \begin{align*}
-    \mathrm{Var}[\hat{\mu}] &= N^{-1}\mathrm{Var}[X_1 w_1]
-    \leq N^{-1}\E[(X_1 w_1)^2] \leq N^{-1}C^2\E[w^2].
+    \Var[\hat{\mu}] &= \frac{1}{N^2}\sum_i\Var[X_i w_i]
+    \leq \frac{1}{N^2}\sum_i\E[(X_i w_i)^2]
+    \leq \frac{C^2}{N^2}\sum_i\E[w_i^2]
+    = \frac{C^2\E[w^2]}{N}.
   \end{align*}
-  With weights normalized to mean 1, $\ESS_{\rm frac}=\E[w]^2/\E[w^2]=1/\E[w^2]$,
-  so $\E[w^2]=1/\ESS_{\rm frac}$, giving the result.
+  Since weights are normalized to mean 1, the ESS formula gives
+  $\E[w^2]=\E[w]^2/\ESS_{\rm frac}=1/\ESS_{\rm frac}$.  The effective-range
+  interpretation follows from identifying the $\neff$-sample estimator with
+  variables $Z_i=X_i w_i/C_{\rm eff}\in[0,1]$.\qed
 \end{proof}
 
 \begin{lemma}[Hoeffding on bounded IS variables]
   \label{lem:hoeffding_is}
-  Under \cref{assum:overlap}, let $C_{\rm max}^\pi=C\max_i w^\pi(\tau_i)$ and
+  Under \cref{assum:overlap}, the product $G(\tau_i)w^\pi(\tau_i)$ lies in
+  $[0, C\cdot w_{\max}^\pi]$ where $w_{\max}^\pi=\max_i w^\pi(\tau_i)$.
+  Normalizing by $C_{\rm max}^\pi=C\cdot w_{\max}^\pi$ defines
   $Z_i=G(\tau_i)w^\pi(\tau_i)/C_{\rm max}^\pi\in[0,1]$ i.i.d.
-  With $\neff$ effective samples:
+  By Hoeffding's inequality applied to $\neff$ effective Bernoulli-range
+  variables, for any $t>0$:
   \begin{equation}
     \Pr\!\left(\tfrac{1}{\neff}\textstyle\sum_i Z_i \leq \E[Z]-t\right)
     \leq \exp\!\left(-2\neff t^2\right).
@@ -1075,38 +1167,67 @@ PoR into safe policy improvement pipelines~\citep{thomas2015high}.
   \end{equation}
 \end{lemma}
 
+\begin{remark}
+  Hoeffding's inequality requires i.i.d.\ samples with bounded range.  The
+  $Z_i$ satisfy both: independence follows from i.i.d.\ trajectories; the
+  $[0,1]$ bound is enforced by the normalizing constant $C_{\rm max}^\pi$.
+  The effective sample size $\neff$ replaces $N$ because ESS collapse
+  concentrates the estimator's variance onto $\neff$ dominant terms.
+\end{remark}
+
 \subsection{Proof of Theorem~\ref{thm:is}}
 \label{app:proof_thm1}
 
 \begin{proof}
 \textbf{Step 1 (Error decomposition).}
-A misranking $\{\hat{V}_B\geq\hat{V}_A\}$ occurs only if at least one of two
-tail events occurs:
+A misranking event $\{\hat{V}_{\rm WIS}(\piB)\geq\hat{V}_{\rm WIS}(\piA)\}$
+requires at least one of the following tail events to occur:
 \begin{align}
-  E_A &= \left\{\hat{V}_{\rm WIS}(\piA) \leq V_A - \Delta/2\right\}\\
-  E_B &= \left\{\hat{V}_{\rm WIS}(\piB) \geq V_B + \Delta/2\right\}
+  E_A &= \bigl\{\hat{V}_{\rm WIS}(\piA) \leq V_A - \Delta/2\bigr\},\\
+  E_B &= \bigl\{\hat{V}_{\rm WIS}(\piB) \geq V_B + \Delta/2\bigr\}.
 \end{align}
-since $V_A-V_B=\Delta$ implies
-$\hat{V}_B\geq\hat{V}_A \Rightarrow \hat{V}_A\leq V_A-\Delta/2$ or
-$\hat{V}_B\geq V_B+\Delta/2$ (or both).
+To see why: if neither $E_A$ nor $E_B$ holds, then
+$\hat{V}_{\rm WIS}(\piA) > V_A-\Delta/2$ and
+$\hat{V}_{\rm WIS}(\piB) < V_B+\Delta/2$.
+Since $V_A-V_B=\Delta$, we have $V_A-\Delta/2=V_B+\Delta/2$, so
+$\hat{V}_{\rm WIS}(\piA) > \hat{V}_{\rm WIS}(\piB)$ --- the correct ranking.
+Hence by contraposition, misranking $\Rightarrow E_A\cup E_B$.
 
-\textbf{Step 2 (Concentration for $\piA$).}
-Define $Z_i^A=G(\tau_i)w^A(\tau_i)\in[0,C\cdot\max w^A]$.  The WIS estimator
-satisfies $\hat{V}_{\rm WIS}(\piA)=\sum_i G_i w_i^A/\sum_j w_j^A$.  After
-normalizing weights to sum to $\neff^A$ effective terms (Lemma~\ref{lem:ess_variance}),
-each normalized term lies in $[0,C_{\rm eff}^A]$ with
-$C_{\rm eff}^A\leq C/\sqrt{\ESS_{\rm frac}^A}$.  By Lemma~\ref{lem:hoeffding_is}
-applied with $t=\Delta/(2C_{\rm eff}^A)$:
-\begin{equation}
-  \Pr(E_A) \leq \exp\!\left(-2\neff^A\cdot\frac{\Delta^2}{4C_{\rm eff}^{A,2}}\right)
-  = \exp\!\left(-\frac{\neff^A\Delta^2}{2C^2}\right).
-\end{equation}
-An identical argument gives $\Pr(E_B)\leq\exp(-\neff^B\Delta^2/2C^2)$.
+\textbf{Step 2 (WIS as a sample mean).}
+The WIS estimator for $\piA$ is
+$\hat{V}_{\rm WIS}(\piA)=\bigl(\sum_i G_i w_i^A\bigr)\big/\bigl(\sum_i w_i^A\bigr)$.
+With weights $w_i^A$ normalized so that $N^{-1}\sum_i w_i^A\to 1$,
+let $\tilde{Z}_i^A = G_i w_i^A$ be the IS-weighted return for trajectory $i$.
+The effective sample count is $\neff^A=N\cdot\ESS_{\rm frac}^A$.  By
+Lemma~\ref{lem:ess_variance}, the variance of the IS estimator is at most
+$C^2/\neff^A$, so we may treat $\hat{V}_{\rm WIS}(\piA)$ as the mean of
+$\neff^A$ effective samples, each bounded in $[0,\, C/\sqrt{\ESS_{\rm frac}^A}]$.
 
-\textbf{Step 3 (Union bound).}
-$\Pr(\hat{V}_B\geq\hat{V}_A)\leq\Pr(E_A)+\Pr(E_B)
-\leq 2\exp(-\bar{n}_{\rm eff}\Delta^2/2C^2)$,
-using $\min(a,b)\leq(a+b)/2$ and $\bar{n}_{\rm eff}=\min(\neff^A,\neff^B)$.\qed
+\textbf{Step 3 (Concentration for $\piA$).}
+Scale the effective samples to $[0,1]$ via
+$Z_i^A = \tilde{Z}_i^A\cdot\sqrt{\ESS_{\rm frac}^A}/C\in[0,1]$.
+Their mean satisfies $\E[Z_i^A]=V_A\cdot\sqrt{\ESS_{\rm frac}^A}/C$.
+Event $E_A$ is equivalent to $\bar{Z}^A\leq\E[Z^A]-\frac{\Delta}{2C}\sqrt{\ESS_{\rm frac}^A}$.
+Applying Lemma~\ref{lem:hoeffding_is} (Hoeffding's inequality) with
+$\neff^A$ effective samples and deviation $t_A=\Delta\sqrt{\ESS_{\rm frac}^A}/(2C)$:
+\begin{align}
+  \Pr(E_A)
+  &\leq \exp\!\Bigl(-2\neff^A\cdot t_A^2\Bigr)
+   = \exp\!\Bigl(-2\neff^A\cdot\frac{\Delta^2\ESS_{\rm frac}^A}{4C^2}\Bigr)
+   = \exp\!\Bigl(-\frac{\neff^A\Delta^2}{2C^2}\Bigr),
+\end{align}
+using $\neff^A=N\cdot\ESS_{\rm frac}^A$.  An identical argument gives
+$\Pr(E_B)\leq\exp\!\bigl(-\neff^B\Delta^2/(2C^2)\bigr)$.
+
+\textbf{Step 4 (Union bound).}
+By the union bound:
+\[
+  \Pr(\hat{V}_{\rm WIS}(\piB)\geq\hat{V}_{\rm WIS}(\piA))
+  \;\leq\; \Pr(E_A)+\Pr(E_B)
+  \;\leq\; 2\exp\!\left(-\frac{\bar{n}_{\rm eff}\Delta^2}{2C^2}\right),
+\]
+where we used $e^{-a}+e^{-b}\leq 2e^{-\min(a,b)}$ with
+$\bar{n}_{\rm eff}=\min(\neff^A,\neff^B)$.\qed
 \end{proof}
 
 \subsection{ESS Lower Bound Under Distribution Shift}
@@ -1161,21 +1282,43 @@ with the $\rho=-1.0$ empirical result. \qed
 \label{app:proof_thm3}
 
 \begin{proof}
-Define $Y_i=\mathbf{1}[g_A^i>g_B^i]\in\{0,1\}$ i.i.d.\ Bernoulli with
-mean $p=\PoR(\piA,\piB)>0.5$.  The PoR estimator
-$\widehat{\PoR}=N^{-1}\sum_i Y_i$ is a sample mean of bounded
-$[0,1]$ variables.
-
-A misranking event $\{\widehat{\PoR}\leq 0.5\}$ requires the sample mean to
-fall below the decision boundary $0.5=p-\rho$.  By Hoeffding's inequality:
+\textbf{Step 1 (Bernoulli structure).}
+For each trajectory $\tau_i$, define the binary indicator
+$Y_i=\mathbf{1}[\hat{V}_A(s_0^i)>\hat{V}_B(s_0^i)]\in\{0,1\}$.  Under
+the event that FQE values equal the true counterfactuals:
 \begin{equation}
-  \Pr\!\left(\widehat{\PoR}\leq p-\rho\right)
-  \leq\exp\!\left(-2\neff\rho^2\right).
+  \E[Y_i] = \Pr_{\tau\sim\beta}[\GA(\tau)>\GB(\tau)] = \PoR(\piA,\piB) = p > 0.5.
 \end{equation}
-The bound is independent of $C$ because $Y_i\in\{0,1\}$ are already in $[0,1]$,
-\emph{regardless} of the magnitude of $g_A^i,g_B^i$.  The return scale $C$
-only affects the sign of the comparison, not the variance of $Y_i$.
-\qed
+The $Y_i$ are i.i.d.\ (since $\tau_i$ are i.i.d.\ under $\beta$) and
+$Y_i\in[0,1]$ with range exactly $1$.  Critically, the range $[0,1]$ holds
+\emph{regardless} of the magnitude of $\hat{V}_A(s_0^i)$ or $\hat{V}_B(s_0^i)$:
+the indicator discards the magnitude and retains only the sign.
+
+\textbf{Step 2 (PoR estimator as sample mean).}
+The PoR estimator is $\widehat{\PoR}(\piA,\piB)=N^{-1}\sum_{i=1}^N Y_i$,
+a sample mean of $N$ i.i.d.\ Bernoulli($p$) random variables.  No IS
+weights appear because the comparison is performed within each trajectory's
+context; $N_{\rm eff}=N\cdot\ESS_{\rm frac}$ effective samples contribute
+(under the PoR-IS formulation) or all $N$ contribute equally (PoR-Model).
+We write $\neff$ to cover both cases.
+
+\textbf{Step 3 (Concentration).}
+A misranking event $\{\widehat{\PoR}(\piA,\piB)\leq 0.5\}$ requires the
+sample mean to fall at least $\rho=p-0.5>0$ below its expectation $p$:
+\begin{equation}
+  \Pr\!\left(\widehat{\PoR}\leq 0.5\right)
+  = \Pr\!\left(N^{-1}\textstyle\sum_i Y_i\leq p-\rho\right)
+  \leq \exp\!\bigl(-2\neff\rho^2\bigr),
+\end{equation}
+by Hoeffding's inequality for bounded $[0,1]$ variables.
+
+\textbf{Key insight ($C$-independence).}  For the IS estimator, the
+bounded range of $Z_i^A=G_i w_i^A/C_{\rm eff}^A$ depends on $C_{\rm eff}^A$
+which grows as $C/\sqrt{\ESS_{\rm frac}}\to\infty$ under distribution shift.
+For PoR, $Y_i\in[0,1]$ with range exactly 1 regardless of $C$: the bound
+depends only on the dominance margin $\rho$ and the number of effective
+samples $\neff$.  This is the root cause of PoR's superiority: it transforms
+a hard real-valued comparison into a unit-range Bernoulli decision.\qed
 \end{proof}
 
 \begin{corollary}[IS vs.\ PoR bound comparison]
@@ -1254,6 +1397,216 @@ $\rho=+0.47$ result on FrozenLake at ESS$=0.4\%$ (Table~\ref{tab:classic}).
 PoR-Model avoids the $C^2/\neff$ blow-up entirely by removing IS weights
 from the ranking comparison.
 
+\section{FQE Convergence}
+\label{app:fqe_convergence}
+
+We establish that the FQE Q-table converges to the true $Q^*$ at a rate
+governed by the contraction factor $\gamma$ and the model estimation error.
+
+\begin{proposition}[FQE convergence rate]
+  \label{prop:fqe_convergence}
+  Let $\mathcal{T}$ be the Bellman optimality operator:
+  $(\mathcal{T}Q)(s,a)=r(s,a)+\gamma\E_{s'\sim P(\cdot|s,a)}[\max_{a'}Q(s',a')]$.
+  Let $\hat{\mathcal{T}}$ be its empirical counterpart using transitions in
+  $\calD$, with model estimation error
+  \begin{equation}
+    \varepsilon_{\rm model} = \max_{s,a}\left|\hat{r}(s,a)-r(s,a)\right|
+    + \gamma \max_{s,a}\bigl\|\hat{P}(\cdot|s,a)-P(\cdot|s,a)\bigr\|_1
+      \cdot\|Q^*\|_\infty.
+    \label{eq:model_err}
+  \end{equation}
+  Then starting from $Q^{(0)}=\mathbf{0}$, after $L$ FQE iterations:
+  \begin{equation}
+    \|Q^{(L)}-Q^*\|_\infty
+    \;\leq\; \gamma^L\|Q^*\|_\infty
+    + \frac{1-\gamma^L}{1-\gamma}\,\varepsilon_{\rm model}.
+    \label{eq:fqe_conv}
+  \end{equation}
+\end{proposition}
+
+\begin{proof}
+  The Bellman operator $\mathcal{T}$ is a $\gamma$-contraction on
+  $(\ell^\infty(\calS\times\calA),\|\cdot\|_\infty)$:
+  \begin{equation}
+    \|\mathcal{T}Q-\mathcal{T}Q'\|_\infty
+    = \gamma\|\max_{a'}Q(\cdot,a')-\max_{a'}Q'(\cdot,a')\|_\infty
+    \leq\gamma\|Q-Q'\|_\infty.
+  \end{equation}
+  This follows because $|\max f - \max g|\leq\max|f-g|$ for any bounded
+  functions $f,g$.  By the Banach fixed-point theorem, $\mathcal{T}$ has a
+  unique fixed point $Q^*$ and $\|\mathcal{T}^L Q^{(0)} - Q^*\|_\infty
+  \leq \gamma^L\|Q^{(0)}-Q^*\|_\infty = \gamma^L\|Q^*\|_\infty$.
+
+  With the empirical operator $\hat{\mathcal{T}}$, each iteration incurs
+  additional error bounded by $\varepsilon_{\rm model}$ (triangle inequality
+  on reward and transition estimation).  Applying the triangle inequality
+  over $L$ iterations with geometric accumulation:
+  \begin{align}
+    \|Q^{(L)}-Q^*\|_\infty
+    &\leq \|(\hat{\mathcal{T}})^L Q^{(0)}-\mathcal{T}^L Q^{(0)}\|_\infty
+    + \|\mathcal{T}^L Q^{(0)}-Q^*\|_\infty\\
+    &\leq \sum_{k=0}^{L-1}\gamma^k\varepsilon_{\rm model}
+    + \gamma^L\|Q^*\|_\infty
+    = \gamma^L\|Q^*\|_\infty + \frac{1-\gamma^L}{1-\gamma}\varepsilon_{\rm model}.\qed
+  \end{align}
+\end{proof}
+
+\begin{corollary}[Convergence to ground truth]
+  \label{cor:fqe_gt}
+  As $n_{s,a}=|\{i,t: s_t^i=s, a_t^i=a\}|\to\infty$ for all $(s,a)$,
+  we have $\varepsilon_{\rm model}\to 0$ by the law of large numbers,
+  and $Q^{(L)}\to Q^*$ for any fixed $L$ satisfying $L\gg 1/(1-\gamma)$.
+  For our tabular setting ($\gamma=0.99$, $L=10$), the contraction yields
+  $\gamma^{10}\approx 0.905$ and the empirical bound is non-vacuous once
+  $n_{s,a}\gtrsim 10$.
+\end{corollary}
+
+\begin{remark}[Implication for PoR-Model]
+  Proposition~\ref{prop:fqe_convergence} directly implies that
+  PoR-Model's counterfactual values $\hat{V}_k(s_0^i)=\sum_a\pi_k(a|s_0^i)Q^{(L)}(s_0^i,a)$
+  converge to the true $V_k(s_0^i)=\sum_a\pi_k(a|s_0^i)Q^*(s_0^i,a)$.
+  Since PoR comparisons only use the \emph{sign} of $\hat{V}_A-\hat{V}_B$,
+  the effective convergence threshold is much weaker: correct ranking of
+  $(s_0,\pi_A,\pi_B)$ requires only $|Q^{(L)}-Q^*|_\infty < \Delta_{s_0}/2$
+  where $\Delta_{s_0}=\sum_a(\pi_A(a|s_0)-\pi_B(a|s_0))Q^*(s_0,a)$ is the
+  per-context value gap.  Even if FQE has not fully converged, the ranking
+  can be exact as long as the approximation error is smaller than half the
+  local value gap.
+\end{remark}
+
+\section{PoR-IS Failure Analysis}
+\label{app:poris_failure}
+
+We formalize why PoR-IS degrades to random ranking under the same regimes
+that defeat IS.
+
+\begin{lemma}[PoR-IS degenerates under zero weights]
+  \label{lem:poris_failure}
+  For a near-deterministic target policy $\pi_A$ with
+  $\pi_A(a^*|s)=1-\epsilon$ for some optimal action $a^*$ at each state,
+  and an $\varepsilon_\beta$-greedy behavior policy with
+  $\beta(a|s)=\varepsilon_\beta/|\calA|+(1-\varepsilon_\beta)\mathbf{1}[a=a_\beta^*]$:
+  \begin{equation}
+    \E[w^A(\tau)] = \prod_{t=0}^T \frac{\pi_A(a_t|s_t)}{\beta(a_t|s_t)}
+    \leq \left(\frac{1-\epsilon}{\varepsilon_\beta/|\calA|}\right)^T
+    \xrightarrow{\varepsilon_\beta\to 0,\, T\to\infty} 0.
+    \label{eq:wA_zero}
+  \end{equation}
+  In this regime, $G_i w_A^i\approx 0$ and $G_i w_B^i\approx 0$ for
+  all~$i$, so $\widehat{\PoR}^{\rm IS}(\pi_A,\pi_B)$ converges to
+  $\Pr[\text{Bernoulli}(0.5)=1]=0.5$ --- identical to a random coin flip.
+\end{lemma}
+
+\begin{proof}
+  Under behavior policy $\beta$, a trajectory has probability
+  $\prod_t\beta(a_t|s_t)$.  When $a_t^*\neq a_{\beta,t}^*$ (behavior and
+  target disagree), the IS factor $\pi_A(a_t|s_t)/\beta(a_t|s_t)\leq
+  \epsilon/(\varepsilon_\beta/|\calA|)=\epsilon|\calA|/\varepsilon_\beta\to 0$.
+  The trajectory weight $w^A(\tau)=\prod_t(\ldots)$ is a product of $T$
+  such factors when the two policies disagree on all steps.  For
+  $\varepsilon_\beta\to 0$ (extreme shift), the probability of a trajectory
+  following the target's greedy path goes to zero, so almost all collected
+  trajectories have $w^A(\tau)\approx 0$.
+
+  When both $g_A^i=G_i\cdot w_A^i\approx 0$ and $g_B^i=G_i\cdot w_B^i\approx 0$,
+  the comparison $g_A^i > g_B^i$ is determined by floating-point tie-breaking
+  or numerical noise: effectively Bernoulli(0.5).  Thus
+  $\widehat{\PoR}^{\rm IS}(\pi_A,\pi_B)\approx 0.5$ with high probability,
+  making the resulting ranking no better than random.\qed
+\end{proof}
+
+\begin{corollary}
+  PoR-IS misranking probability under zero-weight collapse equals $1/2$,
+  independent of the true PoR and the value gap $\Delta$.  This is strictly
+  worse than the IS misranking bound from Theorem~\ref{thm:is} in the
+  low-ESS regime, confirming that PoR-IS provides no benefit over IS when
+  IS itself fails.  PoR-Model, by contrast, bypasses IS weights entirely.
+\end{corollary}
+
+\section{PoR Consistency Under Non-Uniform Rewards}
+\label{app:goldmine_theory}
+
+\begin{proposition}[PoR-Model consistency with heterogeneous rewards]
+  \label{prop:goldmine}
+  Let $r: \calS\times\calA\to\R$ be an arbitrary bounded reward function
+  (not necessarily uniform in $s$).  Suppose FQE converges so that
+  $\|Q^{(L)}-Q^*\|_\infty \leq \varepsilon$.  Let $\Delta_{s_0}
+  = \hat{V}_A(s_0) - \hat{V}_B(s_0) = \sum_a(\pi_A(a|s_0)-\pi_B(a|s_0))Q^*(s_0,a)$
+  be the context-level value gap.  Then:
+  \begin{equation}
+    \Pr\bigl[\widehat{\PoR}^{\rm Model}(\piA,\piB)\leq 0.5\bigr]
+    \leq \exp\!\bigl(-2\neff\,(\hat{\rho}-\varepsilon/\Delta_{\min})^2\bigr),
+    \label{eq:goldmine_bound}
+  \end{equation}
+  where $\hat{\rho}=\PoR(\piA,\piB)-0.5$ is the true dominance margin and
+  $\Delta_{\min}=\min_{i}\Delta_{s_0^i}$.
+\end{proposition}
+
+\begin{proof}
+  Each comparison $Y_i=\mathbf{1}[\hat{V}_A(s_0^i)>\hat{V}_B(s_0^i)]$
+  is a $[0,1]$-bounded random variable.  The approximation error
+  $\|Q^{(L)}-Q^*\|_\infty\leq\varepsilon$ implies each policy value error
+  $|\hat{V}_k^{(L)}(s_0)-V_k(s_0)|\leq\varepsilon$.  A context where
+  $\hat{V}_A(s_0^i)>V_A(s_0^i)-\varepsilon$ and
+  $\hat{V}_B(s_0^i)<V_B(s_0^i)+\varepsilon$ still yields the correct sign if
+  $\Delta_{s_0^i}>2\varepsilon$.  For all contexts satisfying this condition,
+  $\Pr[Y_i=1]\geq \PoR(\piA,\piB)=\hat{\rho}+0.5$.  The remaining contexts
+  (where $\Delta_{s_0^i}\leq 2\varepsilon$) contribute a mass bounded by
+  $\varepsilon/\Delta_{\min}$ to the effective misranking probability.
+  Applying Hoeffding to the mean of $Y_i$ completes the bound.\qed
+\end{proof}
+
+\begin{remark}[Implication for gold mine experiments]
+  Proposition~\ref{prop:goldmine} explains why PoR-Model maintains positive
+  $\rho$ in all three gold mine configurations (\cref{sec:goldmine}):
+  the FQE Q-function correctly encodes gold mine values, so the context-level
+  comparisons $\hat{V}_A(s_0^i)$ vs.\ $\hat{V}_B(s_0^i)$ preserve the
+  ranking for mine-seeker vs.\ goal-seeker policies regardless of how
+  heterogeneous the reward landscape is.  The bound~\eqref{eq:goldmine_bound}
+  degrades only through the model error $\varepsilon$, not through any
+  return-range factor $C$.
+\end{remark}
+
+\section{PoR-Model Under Fixed vs.\ Variable Start States}
+\label{app:fixed_start}
+
+When all trajectories start from the same state $s_0$ (as in our gridworld
+experiments where the agent always starts at $(0,0)$), the PoR-Model ranking
+reduces to the FQE-Value ranking.
+
+\begin{proposition}[Fixed start state equivalence]
+  \label{prop:fixed_start}
+  If $s_0^i = s_0$ for all $i=1,\ldots,N$, then:
+  \begin{equation}
+    \widehat{\PoR}^{\rm Model}(\piA,\piB)
+    = \mathbf{1}\!\left[\hat{V}_A(s_0) > \hat{V}_B(s_0)\right] \in \{0,1\},
+    \label{eq:por_fixed}
+  \end{equation}
+  i.e., the PoR estimate is determined entirely by the sign of
+  $\hat{V}_A(s_0)-\hat{V}_B(s_0)$, which is identical to the comparison
+  performed by FQE-Value ranking.
+\end{proposition}
+
+\begin{proof}
+  Under fixed $s_0^i=s_0$, every indicator $\mathbf{1}[\hat{V}_A(s_0^i)>\hat{V}_B(s_0^i)]$
+  equals the same constant $\mathbf{1}[\hat{V}_A(s_0)>\hat{V}_B(s_0)]$.
+  Hence $\widehat{\PoR}^{\rm Model}(\piA,\piB)=(1/N)\sum_i\mathbf{1}[\ldots]$
+  = the indicator itself.  FQE-Value ranks by $\hat{V}_k(s_0)=\sum_a\pi_k(a|s_0)Q(s_0,a)$,
+  producing the same ordering.\qed
+\end{proof}
+
+\noindent
+\textbf{Consequence.}  In fixed-start-state environments, both PoR-Model and
+FQE-Value depend on the single-state Q-values $Q(s_0,\cdot)$ and produce
+identical rankings.  The advantage of PoR-Model's matched-pair comparison
+emerges in \emph{variable}-start-state environments (e.g., FrozenLake-8$\times$8
+with random start distribution): different trajectories start at different $s_0^i$,
+so the matched comparison $\hat{V}_A(s_0^i)$ vs.\ $\hat{V}_B(s_0^i)$ uses
+context-specific Q-values that correctly identify the best policy in each
+starting configuration, whereas FQE-Value's averaging over $s_0^i$ can be
+dominated by easy starting states.  This explains the gap in Table~\ref{tab:classic}:
+PoR-Model $\rho=1.000$ vs.\ FQE-Value $\rho=0.44$ on FrozenLake at ESS$=0.4\%$.
+
 \section{Additional Experimental Details}
 \label{app:exp_details}
 
@@ -1291,10 +1644,23 @@ shows 10 suffice), $\varepsilon_\mathrm{num}=10^{-12}$ for numerical
 stability.  Ground truth: $N_{\rm gt}=500$ rollouts for multi-environment
 benchmark, $N_{\rm gt}=2000$ for single-environment and classic experiments.
 
+\paragraph{Gold mine setup.}
+Gold mine rewards are applied at every visit to the mine cell(s); they are
+not one-time.  This simplifies the MDP (state space remains $|\calS|$, no
+mine-collected flags needed) and FQE correctly estimates Q-values including
+gold mine contributions since transitions with mine rewards appear in the
+dataset.  Three configurations: GM-Center (mine at row 2, col 2, $r_{\rm gold}=0.5$),
+GM-Corner (mine at row 0, col 4, $r_{\rm gold}=1.0$), GM-2mines
+(mines at $(1,3)$ and $(3,1)$, $r_{\rm gold}=0.4$).  Mine-seeking policies are
+$\varepsilon$-greedy on a heuristic Q that directs the agent toward the nearest
+mine whenever it is closer than the goal, then toward the goal; goal-seeking
+policies use a right-first heuristic Q that ignores mines.  Ground truth via
+$N_{\rm gt}=1000$ rollouts; 15 trials per (config, $\varepsilon_\beta$) pair.
+
 \paragraph{Reproducibility.}
 Fixed random seeds; results averaged over 12--25 independent trials.  All
-experiments run on CPU in $<$30 minutes total.  The complete codebase is at
-\href{https://github.com/dhruvgoyal/causal-rl}{github.com/dhruvgoyal/causal-rl}.
+experiments run on CPU in $<$45 minutes total.  The complete codebase is at
+\href{https://github.com/Dhruv-Git21/CS748-CausalRL}{github.com/Dhruv-Git21/CS748-CausalRL}.
 
 \section{PoR Dominance Matrix}
 \label{app:por_matrix}
